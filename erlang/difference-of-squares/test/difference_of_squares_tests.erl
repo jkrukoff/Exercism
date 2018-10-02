@@ -1,0 +1,47 @@
+-module(difference_of_squares_tests).
+
+-include_lib("erl_exercism/include/exercism.hrl").
+-include_lib("eunit/include/eunit.hrl").
+
+-define(assertSumOfSquares(Expected, Number), ?assertEqual(Expected, difference_of_squares:sum_of_squares(Number))).
+-define(assertSquareOfSum(Expected, Number), ?assertEqual(Expected, difference_of_squares:square_of_sum(Number))).
+-define(assertDifference(Expected, Number), ?assertEqual(Expected, difference_of_squares:difference_of_squares(Number))).
+
+%% Square the sum of the numbers up to the given number
+
+square_of_sum_5_test() ->
+  ?assertSquareOfSum( 225, 5 ).
+
+square_of_sum_10_test() ->
+  ?assertSquareOfSum( 3025, 10 ).
+
+square_of_sum_100_test() ->
+  ?assertSquareOfSum( 25502500, 100 ).
+
+%% Sum the squares of the numbers up to the given number
+
+sum_of_square_5_test() ->
+  ?assertSumOfSquares( 55, 5 ).
+
+sum_of_square_10_test() ->
+  ?assertSumOfSquares( 385, 10 ).
+
+sum_of_square_100_test() ->
+  ?assertSumOfSquares( 338350, 100 ).
+
+%% Subtract sum of squares from square of sum
+
+difference_of_squares_0_test() ->
+  ?assertDifference( 0, 0 ).
+
+difference_of_squares_5_test() ->
+  ?assertDifference( 170, 5 ).
+
+difference_of_squares_10_test() ->
+  ?assertDifference( 2640, 10 ).
+
+difference_of_squares_100_test() ->
+  ?assertDifference( 25164150, 100 ).
+
+version_test() ->
+  ?assertMatch(1, difference_of_squares:test_version()).
