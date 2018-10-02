@@ -2,7 +2,7 @@
 
 -export([numerals/1, test_version/0]).
 
-%% API.
+%% API
 
 -spec numerals(integer()) -> string().
 numerals(Number) when Number =< 4999 ->
