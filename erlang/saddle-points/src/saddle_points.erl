@@ -4,7 +4,7 @@
 
 %% API
 
--spec saddle_points([[integer()]]) -> [{pos_integer(), pos_integer()}].
+-spec saddle_points([[integer()]]) -> [{non_neg_integer(), non_neg_integer()}].
 saddle_points([[]]) ->
     [];
 saddle_points(Matrix) ->

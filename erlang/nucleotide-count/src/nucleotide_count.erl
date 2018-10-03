@@ -4,7 +4,7 @@
 
 -export([count/2, nucleotide_counts/1, test_version/0]).
 
--spec count(nucleotide(), nucleotide()) -> pos_integer().
+-spec count(nucleotide(), nucleotide()) -> non_neg_integer().
 count(Dna, [N]) when N == $A; N == $T; N == $C; N == $G ->
     length([Found || Found <- Dna, Found == N]);
 count(_Dna, _) ->
@@ -13,7 +13,7 @@ count(_Dna, _) ->
     % badmatch exception propagate.
     erlang:error("Invalid nucleotide").
 
--spec nucleotide_counts(nucleotide()) -> [{nucleotide(), pos_integer()}].
+-spec nucleotide_counts(nucleotide()) -> [{nucleotide(), non_neg_integer()}].
 nucleotide_counts(Dna) ->
     [{[N], count(Dna, [N])} || N <- "ATCG"].
 
