@@ -39,5 +39,5 @@ primes_up_to_1000_test() ->
         947, 953, 967, 971, 977, 983, 991, 997 ],
       sieve:sieve(1000)).
 
-primes_up_to_50000_test() ->
-    ?assert(length(sieve:sieve(20000)) > 0).
+primes_up_to_100000_test() ->
+    ?assert(length(sieve:sieve(100000)) > 0).

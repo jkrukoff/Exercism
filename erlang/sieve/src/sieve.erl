@@ -10,15 +10,29 @@
 sieve(1) ->
     [];
 sieve(N) when N >= 2 ->
-    % Skip the even numbers right from the start.
-    sieve(N, lists:seq(3, N, 2), [2]).
-
-%% Internal
-
-sieve(_Last, [], Primes) ->
-    lists:reverse(Primes);
-sieve(Last, [Prime | Rest], Primes) ->
-    Multiples = ?SET_IMPL:from_list(lists:seq(Prime, Last, Prime)),
-    sieve(Last,
-          [R || R <- Rest, not ?SET_IMPL:is_element(R, Multiples)],
-          [Prime | Primes]).
+    {_, Primes} = lists:foldl(
+        fun (Candidate, {Rejected, Primes}) ->
+            case ?SET_IMPL:is_element(Candidate, Rejected) of
+                true ->
+                    {Rejected, Primes};
+                false ->
+                    % As an optimization, we're only required to mark
+                    % values from the square of the candidate in
+                    % consideration, instead of starting from the
+                    % first multiple of the candidate value.
+                    StartMarking = Candidate * Candidate,
+                    NextRejected = case StartMarking > N of
+                        true ->
+                            Rejected;
+                        false ->
+                            Multiples = ?SET_IMPL:from_list(
+                                lists:seq(StartMarking, N, Candidate)),
+                            ?SET_IMPL:union(Rejected, Multiples)
+                    end,
+                    {NextRejected, [Candidate | Primes]}
+            end
+        end,
+        % Skip the even numbers right from the start.
+        {?SET_IMPL:new(), [2]},
+        lists:seq(3, N, 2)),
+    lists:reverse(Primes).
