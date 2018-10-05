@@ -6,6 +6,13 @@
 -include_lib("erl_exercism/include/exercism.hrl").
 -include_lib("eunit/include/eunit.hrl").
 
+simple_test() ->
+	Target=4,
+	Coins=[1, 2, 5],
+	Expected=[2, 2],
+	Actual=change:find_fewest_coins(Target, Coins),
+	?assertMatch(Expected, lists:sort(Actual)).
+
 single_coin_change_test() ->
 	Target=25,
 	Coins=[1, 5, 10, 25, 100],
