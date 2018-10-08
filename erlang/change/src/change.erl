@@ -12,28 +12,30 @@ find_fewest_coins(Amount, _Coins) when Amount < 0 ->
 find_fewest_coins(_Amount, []) ->
     {error, invalid_coins};
 find_fewest_coins(Amount, Coins) ->
-    Solutions = change(Amount, Coins),
-    io:format("Solutions: ~p~n", [length(Solutions)]),
-    lists:foldl(
-        fun best_solution/2,
-        undefined,
-        Solutions).
+    SortedCoins = lists:reverse(lists:sort(Coins)),
+    search(Amount, SortedCoins, [], undefined).
 
 %% Internal
 
-change(Amount, _Coins) when Amount < 0 ->
-    [invalid];
-change(0, _Coins) ->
-    [[]];
-change(Amount, Coins) ->
-    Solutions = [[C | S] || C <- Coins, S <- change(Amount - C, Coins), S /= invalid],
-    Solutions.
+search(0, _Coins, Solution, Best) ->
+    fewest_coins(Solution, Best);
+search(_Amount, [], _Solution, Best) ->
+    Best;
+search(Amount, _Coins, _Solution, Best) when Amount < 0 ->
+    Best;
+search(_Amount, _Coins, Solution, Best) when
+        Best /= undefined,
+        length(Solution) >= length(Best) ->
+    Best;
+search(Amount, [Coin | NextCoins] = Coins, Solution, Best) ->
+    NextBest = search(Amount, NextCoins, Solution, Best),
+    fewest_coins(search(Amount - Coin, Coins, [Coin | Solution], Best), NextBest).
 
-best_solution(S1, undefined) ->
+fewest_coins(S1, undefined) ->
     S1;
-best_solution(undefined, S2) ->
+fewest_coins(undefined, S2) ->
     S2;
-best_solution(S1, S2) when length(S1) =< length(S2) ->
+fewest_coins(S1, S2) when length(S1) =< length(S2) ->
     S1;
-best_solution(_S1, S2) ->
+fewest_coins(_S1, S2) ->
     S2.
