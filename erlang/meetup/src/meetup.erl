@@ -11,11 +11,8 @@
 
 -spec schedule(calendar:year(), calendar:month(), day(), period()) -> calendar:date().
 schedule(Year, Month, DayOfWeek, Period) ->
-    % Find the range of valid days in the given month.
-    Start = date(Year, Month, 1),
-    End = date(Year, Month, calendar:last_day_of_the_month(Year, Month)),
-    % Find all days with the right day of week.
-    CandidateDays = days(Start, End, DayOfWeek),
+    % Find all days in month with the right day of week.
+    CandidateDays = candidate_days(Year, Month, DayOfWeek),
     % Filter to the one day that matches the given criteria.
     period(CandidateDays, Period).
 
@@ -25,30 +22,25 @@ test_version() ->
 
 %% Internal
 
-date(Year, Month, Day) ->
-    Date = {Year, Month, Day},
-    true = calendar:valid_date(Date),
-    Date.
-
-days({Year, Month, StartDay}, {Year, Month, EndDay}, DayOfWeek) ->
-    WhichDay = day(DayOfWeek),
+candidate_days(Year, Month, DayOfWeek) ->
+    DayNumber = day_number(DayOfWeek),
     [{Year, Month, Day} ||
-     Day <- lists:seq(StartDay, EndDay),
-     calendar:day_of_the_week(Year, Month, Day) == WhichDay].
+     Day <- lists:seq(1, calendar:last_day_of_the_month(Year, Month)),
+     calendar:day_of_the_week(Year, Month, Day) == DayNumber].
 
-day(monday) ->
+day_number(monday) ->
     1;
-day(tuesday) ->
+day_number(tuesday) ->
     2;
-day(wednesday) ->
+day_number(wednesday) ->
     3;
-day(thursday) ->
+day_number(thursday) ->
     4;
-day(friday) ->
+day_number(friday) ->
     5;
-day(saturday) ->
+day_number(saturday) ->
     6;
-day(sunday) ->
+day_number(sunday) ->
     7.
 
 period(Days, first) ->
