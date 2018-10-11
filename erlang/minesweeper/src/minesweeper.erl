@@ -1,9 +1,12 @@
 -module(minesweeper).
 
+-define(MINE, $*).
+-define(EMPTY, $ ).
+
 -export([annotate/1, test_version/0]).
 
--type minefield() :: [] | [[$  | $*]].
--type solution() :: [] | [[$  | $* | $1..$9]].
+-type minefield() :: [] | [[?EMPTY | ?MINE]].
+-type solution() :: [] | [[?EMPTY | ?MINE | $1..$9]].
 
 %% API
 
@@ -47,20 +50,20 @@ annotated_to_strings(Annotated) ->
 annotate(Coordinate, Coordinates) ->
     #{Coordinate := V} = Coordinates,
     case V of
-        $* ->
-            $*;
-        $  ->
+        ?MINE ->
+            ?MINE;
+        ?EMPTY ->
             case surrounding_mines(Coordinate, Coordinates) of
                 0 ->
-                    $ ;
+                    ?EMPTY;
                 Count ->
                     $0 + Count
             end
     end.
 
 surrounding_mines({X, Y}, Coordinates) ->
-    length([$* ||
+    length([?MINE ||
             AdjacentX <- [X - 1, X, X + 1],
             AdjacentY <- [Y - 1, Y, Y + 1],
             {AdjacentX, AdjacentY} /= {X, Y},
-            maps:get({AdjacentX, AdjacentY}, Coordinates, $ ) == $*]).
+            maps:get({AdjacentX, AdjacentY}, Coordinates, ?EMPTY) == ?MINE]).
