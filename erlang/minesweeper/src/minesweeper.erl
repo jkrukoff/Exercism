@@ -13,8 +13,7 @@ annotate([]) ->
 annotate([[]]) ->
     [[]];
 annotate(Minefield) ->
-    Rows = [enumerate(R) || R <- Minefield],
-    Coordinates = maps:from_list([{{X, Y}, Value} || {Y, Row} <- enumerate(Rows), {X, Value} <- Row]),
+    Coordinates = strings_to_coordinates(Minefield),
     Annotated = [{Y, X, annotate({X, Y}, Coordinates)} || {X, Y} <- maps:keys(Coordinates)],
     annotated_to_strings(Annotated).
 
@@ -24,31 +23,16 @@ test_version() ->
 
 %% Internal
 
+strings_to_coordinates(Strings) ->
+    Rows = [enumerate(R) || R <- Strings],
+    maps:from_list([{{X, Y}, Value} || {Y, Row} <- enumerate(Rows), {X, Value} <- Row]).
+
 enumerate(List) ->
     lists:zip(lists:seq(1, length(List)), List).
 
-annotate(Coordinate, Coordinates) ->
-    #{Coordinate := V} = Coordinates,
-    case V of
-        $* ->
-            $*;
-        $  ->
-            case length(surrounding_mines(Coordinate, Coordinates)) of
-                0 ->
-                    $ ;
-                Count ->
-                    $0 + Count
-            end
-    end.
-
-surrounding_mines({X, Y}, Coordinates) ->
-    [$* ||
-     AdjacentX <- [X - 1, X, X + 1],
-     AdjacentY <- [Y - 1, Y, Y + 1],
-     {AdjacentX, AdjacentY} /= {X, Y},
-     maps:get({AdjacentX, AdjacentY}, Coordinates, $ ) == $*].
-
 annotated_to_strings(Annotated) ->
+    % First sort to put everything in order, then partition by Y
+    % value.
     {_, Strings} = lists:foldl(
         fun ({Y, _X, Value}, {Y, [Row | Rows]}) ->
                 {Y, [[Value | Row] | Rows]};
@@ -57,4 +41,26 @@ annotated_to_strings(Annotated) ->
         end,
         {undefined, []},
         lists:sort(Annotated)),
+    % But we put it together backwards, so reverse all the things.
     lists:reverse([lists:reverse(S) || S <- Strings]).
+
+annotate(Coordinate, Coordinates) ->
+    #{Coordinate := V} = Coordinates,
+    case V of
+        $* ->
+            $*;
+        $  ->
+            case surrounding_mines(Coordinate, Coordinates) of
+                0 ->
+                    $ ;
+                Count ->
+                    $0 + Count
+            end
+    end.
+
+surrounding_mines({X, Y}, Coordinates) ->
+    length([$* ||
+            AdjacentX <- [X - 1, X, X + 1],
+            AdjacentY <- [Y - 1, Y, Y + 1],
+            {AdjacentX, AdjacentY} /= {X, Y},
+            maps:get({AdjacentX, AdjacentY}, Coordinates, $ ) == $*]).
