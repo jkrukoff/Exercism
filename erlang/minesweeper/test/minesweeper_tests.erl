@@ -127,6 +127,23 @@ vertical_line_mines_at_edges_test() ->
 	],
 	?assertMatch(Expected, minesweeper:annotate(Input)).
 
+irregular_mines_test() ->
+	Input=[
+		"*",
+		" ",
+		"     *",
+		" ",
+		"*"
+	],
+	Expected=[
+		"*",
+		"1",
+		"    1*",
+		"1",
+		"*"
+	],
+	?assertMatch(Expected, minesweeper:annotate(Input)).
+
 cross_test() ->
 	Input=[
 		"  *  ",
