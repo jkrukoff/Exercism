@@ -6,5 +6,13 @@ defmodule Words do
   """
   @spec count(String.t()) :: map
   def count(sentence) do
+    String.downcase(sentence)
+    |> String.split(~r/[^[:alnum:]-]+/u, trim: true)
+    |> Enum.reduce(
+      %{},
+      fn word, counts ->
+        Map.update(counts, word, 1, &(&1 + 1))
+      end
+    )
   end
 end
