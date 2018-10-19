@@ -8,9 +8,9 @@ defmodule RotationalCipher do
   """
   @spec rotate(text :: String.t(), shift :: integer) :: String.t()
   def rotate(text, shift) do
-    String.to_charlist(text)
-    |> Enum.map(&(rotate_character(&1, shift)))
-    |> List.to_string()
+    for <<character :: utf8 <- text>>, into: "" do
+      <<rotate_character(character, shift) :: utf8>>
+    end
   end
 
   defp rotate_character(character, shift) when character in ?a..?z do
