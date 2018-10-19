@@ -29,7 +29,7 @@ defmodule NucleotideCount do
   def histogram(strand) do
     Enum.reduce(
       strand,
-      %{?A => 0, ?T => 0, ?C => 0, ?G => 0},
+      Map.new(@nucleotides, &({&1, 0})),
       fn nucleotide, counts ->
         Map.update!(counts, nucleotide, &(&1 + 1))
       end
