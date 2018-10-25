@@ -13,8 +13,20 @@ defmodule PigLatinTest do
       assert PigLatin.translate("apple") == "appleay"
     end
 
+    test "word beginning with ae" do
+      assert PigLatin.translate("aether") == "aetheray"
+    end
+
     test "word beginning with e" do
       assert PigLatin.translate("ear") == "earay"
+    end
+
+    test "word beginning with e but longer" do
+      assert PigLatin.translate("earwig") == "earwigay"
+    end
+
+    test "word beginning with e but different" do
+      assert PigLatin.translate("edge") == "edgeay"
     end
 
     test "word beginning with i" do
@@ -35,6 +47,10 @@ defmodule PigLatinTest do
   end
 
   describe "first consonant letters and ay are moved to the end of words that start with consonants" do
+    test "word beginning with b" do
+      assert PigLatin.translate("beef") == "eefbay"
+    end
+
     test "word beginning with p" do
       assert PigLatin.translate("pig") == "igpay"
     end
@@ -63,7 +79,7 @@ defmodule PigLatinTest do
       assert PigLatin.translate("stringify") == "ingifystray"
     end
 
-    test "word beginning with a serie of consonants : aliens speak Pig Latin too" do
+    test "word beginning with a series of consonants : aliens speak Pig Latin too" do
       assert PigLatin.translate("zkrrkrkrkrzzzkewk") == "ewkzkrrkrkrkrzzzkay"
     end
   end
