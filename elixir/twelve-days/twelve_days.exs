@@ -5,7 +5,7 @@ defmodule TwelveDays do
   """
   @spec verse(number :: integer) :: String.t()
   def verse(number) do
-    "On the #{sequence(number)} day of Christmas my true love gave to me: #{gifts(number)}."
+    "On the #{sequence(number)} day of Christmas my true love gave to me: #{gifts(number)}"
   end
 
   @sequences List.to_tuple(~W(
@@ -26,28 +26,22 @@ defmodule TwelveDays do
   defp sequence(n), do: elem(@sequences, n - 1)
 
   defp gifts(number) when number >= 1 do
-    case Enum.map(number..1, &gift/1) do
-      [one] ->
-        one
-      many ->
-        {many, [last]} = Enum.split(many, -1)
-        Enum.join(many, ", ") <> ", and " <> last
-    end
+    Enum.map(number..1, &gift/1)
   end
 
   @gifts {
-    "a Partridge in a Pear Tree",
-    "two Turtle Doves",
-    "three French Hens",
-    "four Calling Birds",
-    "five Gold Rings",
-    "six Geese-a-Laying",
-    "seven Swans-a-Swimming",
-    "eight Maids-a-Milking",
-    "nine Ladies Dancing",
-    "ten Lords-a-Leaping",
-    "eleven Pipers Piping",
-    "twelve Drummers Drumming",
+    "a Partridge in a Pear Tree.",
+    "two Turtle Doves, and ",
+    "three French Hens, ",
+    "four Calling Birds, ",
+    "five Gold Rings, ",
+    "six Geese-a-Laying, ",
+    "seven Swans-a-Swimming, ",
+    "eight Maids-a-Milking, ",
+    "nine Ladies Dancing, ",
+    "ten Lords-a-Leaping, ",
+    "eleven Pipers Piping, ",
+    "twelve Drummers Drumming, ",
   }
 
   defp gift(n), do: elem(@gifts, n - 1)
