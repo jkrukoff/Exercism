@@ -1,3 +1,6 @@
+# Exercism
+.exercism
+
 # Vim
 *.swp
 *.swo
@@ -13,3 +16,7 @@ erl_crash.dump
 *.ez
 *.beam
 /config/*.secret.exs
+
+# Python
+__pycache__
+.mypy_cache
