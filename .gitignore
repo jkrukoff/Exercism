@@ -19,4 +19,5 @@ erl_crash.dump
 
 # Python
 __pycache__
+.pytest_cache
 .mypy_cache
