@@ -8,6 +8,12 @@ ExUnit.configure(exclude: :pending, trace: true)
 defmodule MarkdownTest do
   use ExUnit.Case
 
+  test "parses blank lines as empty" do
+    input = "\n\n\n"
+    expected = ""
+    assert Markdown.parse(input) == expected
+  end
+
   test "parses normal text as a paragraph" do
     input = "This will be a paragraph"
     expected = "<p>This will be a paragraph</p>"
