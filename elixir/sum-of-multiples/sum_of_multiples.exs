@@ -4,11 +4,10 @@ defmodule SumOfMultiples do
   """
   @spec to(non_neg_integer, [non_neg_integer]) :: non_neg_integer
   def to(limit, factors) do
-    Stream.map(factors, fn factor -> 
+    Stream.flat_map(factors, fn factor -> 
       Stream.iterate(0, &(&1 + factor))
       |> Stream.take_while(&(&1 < limit))
     end)
-    |> Stream.concat()
     |> Stream.uniq()
     |> Enum.sum()
   end
