@@ -39,6 +39,11 @@ defmodule Markdown do
     end
   end
 
+  defp expect(what, tokens) do
+    [{^what, _} | tokens] = tokens
+    tokens
+  end
+
   defp parse_tokens(tokens, ast \\ [])
 
   defp parse_tokens([], ast) do
@@ -94,11 +99,6 @@ defmodule Markdown do
     {tokens, text} = parse_text(tokens, [token])
     ast = [{:literal, text} | ast]
     parse_line(tokens, ast)
-  end
-
-  defp expect(what, tokens) do
-    [{^what, _} | tokens] = tokens
-    tokens
   end
 
   defp parse_line([{:bold, _} | tokens], ast) do
