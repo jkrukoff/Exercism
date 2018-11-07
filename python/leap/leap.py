@@ -5,5 +5,4 @@ def is_leap_year(year: int) -> bool:
     year -- An integer year.
     returns -- The leap year status as true/false.
     """
-
-    return year % 400 == 0 or (year % 100 != 0 and year % 4 == 0)
+    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
