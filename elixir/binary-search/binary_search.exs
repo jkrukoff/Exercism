@@ -26,7 +26,7 @@ defmodule BinarySearch do
     partition(numbers, key, 0, tuple_size(numbers) - 1)
   end
 
-  defguardp midpoint(first, last) when div(last - first, 2) + first
+  defguardp midpoint(first, last) when div(first + last, 2)
 
   defp partition(numbers, key, first, last) when elem(numbers, midpoint(first, last)) == key do
     {:ok, midpoint(first, last)}
