@@ -11,7 +11,7 @@ is_valid(ISBN) ->
             false;
         invalid_digit ->
             false;
-        Digits ->
+        Digits when is_list(Digits) ->
             lists:sum([I * E || {I, E} <- enumerate(lists:reverse(Digits))]) rem 11 == 0
     end.
 
