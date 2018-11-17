@@ -11,7 +11,7 @@ distance(Strand1, Strand2) when length(Strand1) /= length(Strand2) ->
     {error, "left and right strands must be of equal length"};
 distance(Strand1, Strand2) ->
     lists:foldl(
-      fun ({S1, S1}, Differences) ->
+      fun ({N, N}, Differences) ->
           Differences;
       (_, Differences) ->
           Differences + 1
