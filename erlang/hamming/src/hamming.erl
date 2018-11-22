@@ -10,6 +10,7 @@
 distance(Strand1, Strand2) when length(Strand1) /= length(Strand2) ->
     {error, "left and right strands must be of equal length"};
 distance(Strand1, Strand2) ->
+    Strands = lists:zip(Strand1, Strand2),
     lists:foldl(
       fun ({N, N}, Differences) ->
           Differences;
@@ -17,7 +18,7 @@ distance(Strand1, Strand2) ->
           Differences + 1
       end,
       0,
-      lists:zip(Strand1, Strand2)).
+      Strands).
 
 -spec test_version() -> integer().
 test_version() ->
