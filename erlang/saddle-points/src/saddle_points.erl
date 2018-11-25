@@ -23,8 +23,8 @@ is_empty(L) when is_list(L) ->
     false.
 
 transpose(Matrix) ->
-    Heads = [hd(Row) || Row <- Matrix],
-    Tails = [tl(Row) || Row <- Matrix],
+    Heads = [Head || [Head | _] <- Matrix],
+    Tails = [Tail || [_ | Tail] <- Matrix],
     case lists:any(fun is_empty/1, Tails) of
         true ->
             [Heads];
