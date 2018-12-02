@@ -22,16 +22,21 @@ decode(Integers) ->
 
 %% Internal
 
-encode_integer(0) ->
-    [0];
+take_bits(Integer) ->
+    {Integer rem 128, Integer div 128}.
+
 encode_integer(Integer) ->
-    ContinuationBits = lists:duplicate(?MAX_CODED_BYTES - 1, 1) ++ [0],
-    ValueBits = [ I || <<I:7/integer>> <= <<Integer:7/integer-unit:?MAX_CODED_BYTES>> ],
-    Parts = lists:dropwhile(fun ({_, V}) -> V == 0 end,
-                            lists:zip(ContinuationBits, ValueBits)),
-    Bytes = << <<Continuation:1/integer, Value:7/integer>> ||
-               {Continuation, Value} <- Parts >>,
-    binary_to_list(Bytes).
+    encode_integer(final, Integer).
+
+encode_integer(final, Integer) ->
+    {Digit, Rest} = take_bits(Integer),
+    encode_integer(rest, Rest) ++ [Digit];
+encode_integer(rest, 0) ->
+    [];
+encode_integer(rest, Integer) ->
+    {Value, Rest} = take_bits(Integer),
+    <<Digit:8>> = <<1:1, Value:7>>,
+    encode_integer(rest, Rest) ++ [Digit].
 
 decode_integer([], [_ | _]) ->
     {error, unterminated};
