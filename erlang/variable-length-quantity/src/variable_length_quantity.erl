@@ -1,15 +1,17 @@
 -module(variable_length_quantity).
 
--define(MAX_CODED_BYTES, 5).
-
 -export([encode/1,
          decode/1]).
 
+-type bytes() :: [0..255].
+
 %% API
 
+-spec encode([integer()]) -> bytes().
 encode(Integers) ->
     lists:append([encode_integer(I) || I <- Integers]).
 
+-spec decode(bytes()) -> [integer()] | undefined.
 decode([]) ->
     [];
 decode(Integers) ->
@@ -22,21 +24,20 @@ decode(Integers) ->
 
 %% Internal
 
-take_bits(Integer) ->
-    {Integer rem 128, Integer div 128}.
+code_length(Integer) ->
+    % Calculate the number of 7 bit chunks needed to store the given
+    % integer value.
+    ceil(math:log2(Integer + 1) / 7).
 
+encode_integer(0) ->
+    [0];
 encode_integer(Integer) ->
-    encode_integer(final, Integer).
-
-encode_integer(final, Integer) ->
-    {Digit, Rest} = take_bits(Integer),
-    encode_integer(rest, Rest) ++ [Digit];
-encode_integer(rest, 0) ->
-    [];
-encode_integer(rest, Integer) ->
-    {Value, Rest} = take_bits(Integer),
-    <<Digit:8>> = <<1:1, Value:7>>,
-    encode_integer(rest, Rest) ++ [Digit].
+    Length = code_length(Integer),
+    ContinuationBits = lists:duplicate(Length - 1, 1) ++ [0],
+    ValueBits = [ V || <<V:7>> <= <<Integer:Length/unit:7>> ],
+    [Byte ||
+     {C, V} <- lists:zip(ContinuationBits, ValueBits),
+     <<Byte>> <= <<C:1, V:7>>].
 
 decode_integer([], [_ | _]) ->
     {error, unterminated};
@@ -45,8 +46,8 @@ decode_integer([Byte | Rest], Partial) ->
     case Continuation of
         0 ->
             Values = lists:reverse([Value | Partial]),
-            Padded = lists:duplicate(?MAX_CODED_BYTES - length(Values), 0) ++ Values,
-            <<Integer:7/integer-unit:?MAX_CODED_BYTES>> = << <<V:7>> || V <- Padded >>,
+            Length = length(Values),
+            <<Integer:Length/unit:7>> = << <<V:7>> || V <- Values >>,
             {ok, {Integer, Rest}};
         1 ->
             decode_integer(Rest, [Value | Partial])
