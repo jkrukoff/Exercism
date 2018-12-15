@@ -24,11 +24,60 @@ x_can_win_on_a_1x1_board_test() ->
 	Expected=x,
 	?assertMatch(Expected, connect:winner(Input)).
 
+x_can_win_on_a_2x2_board_test() ->
+	Input=[
+		"X X",
+                " . ."
+	],
+	Expected=x,
+	?assertMatch(Expected, connect:winner(Input)).
+
+x_wrong_direction_on_a_2x2_board_test() ->
+	Input=[
+		"X .",
+                " X ."
+	],
+	Expected=undefined,
+	?assertMatch(Expected, connect:winner(Input)).
+
 o_can_win_on_a_1x1_board_test() ->
 	Input=[
 		"O"
 	],
 	Expected=o,
+	?assertMatch(Expected, connect:winner(Input)).
+
+o_can_win_on_a_2x2_board_test() ->
+	Input=[
+		"O .",
+                " O ."
+	],
+	Expected=o,
+	?assertMatch(Expected, connect:winner(Input)).
+
+o_wrong_direction_on_a_2x2_board_test() ->
+	Input=[
+		"O O",
+                " . ."
+	],
+	Expected=undefined,
+	?assertMatch(Expected, connect:winner(Input)).
+
+incomplete_2x2_board_test() ->
+	Input=[
+		"O .",
+                " . X"
+	],
+	Expected=undefined,
+	?assertMatch(Expected, connect:winner(Input)).
+
+only_edges_3x3_does_not_make_a_winner_test() ->
+	Input=[
+		"O O X",
+		" X . X",
+		"  X O O"
+	],
+	Expected=undefined,
 	?assertMatch(Expected, connect:winner(Input)).
 
 only_edges_does_not_make_a_winner_test() ->
