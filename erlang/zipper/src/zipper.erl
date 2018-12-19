@@ -15,7 +15,7 @@
 % The test suite heavily uses nil for both empty and error values.
 % I'd consider it more idiomatic to use undefined for empty values,
 % and wrap possibly erroring functions in the standard ok/error
-% tuples.
+% return tuples.
 
 -record(branch, {value :: term(),
                  left = nil :: branch(),
