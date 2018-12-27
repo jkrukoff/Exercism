@@ -8,13 +8,15 @@
 smallest(Min, Max) when Min > Max ->
     {error, invalid_range};
 smallest(Min, Max) ->
-    collect_on_condition(fun erlang:'<'/2, palindromes(Min, Max)).
+    Factors = lists:seq(Min, Max),
+    palindromes(Factors, Factors, fun erlang:'<'/2, undefined).
 
 -spec largest(integer(), integer()) -> {integer(), [{integer(), integer()}]} | {error, atom()}.
 largest(Min, Max) when Min > Max ->
     {error, invalid_range};
 largest(Min, Max) ->
-    collect_on_condition(fun erlang:'>'/2, palindromes(Min, Max)).
+    Factors = lists:seq(Max, Min, -1),
+    palindromes(Factors, Factors, fun erlang:'>'/2, undefined).
 
 -spec test_version() -> integer().
 test_version() ->
@@ -22,9 +24,31 @@ test_version() ->
 
 %% Internal
 
-palindromes(Min, Max) ->
-    Factors = lists:seq(Min, Max),
-    [{F1 * F2, {F1, F2}} || F1 <- Factors, F2 <- Factors, F1 =< F2, is_palindrome(F1 * F2)].
+palindromes([], _F2, _Condition, Best) ->
+    Best;
+palindromes([_ | F1Tail], [], Condition, Best) ->
+    palindromes(F1Tail, F1Tail, Condition, Best);
+palindromes([F1Head | _] = F1, [F2Head | F2Tail], Condition, Best) ->
+    EvenBetter = case is_best(Condition, F1Head * F2Head, Best) of
+        true ->
+            {F1Head * F2Head, [{F1Head, F2Head}]};
+        equal ->
+            {Product, Factors} = Best,
+            {Product, [{F1Head, F2Head} | Factors]};
+        false ->
+            Best
+    end,
+    palindromes(F1, F2Tail, Condition, EvenBetter).
+
+% Order matters for performance here, since we've got quite a few
+% possibilities to check. As is_palindrome is the most expensive of
+% our checks, attempt to delay that until we're sure it's necessary.
+is_best(_Condition, Product, undefined) ->
+    is_palindrome(Product);
+is_best(_Condition, Product, {Product, _Factors}) ->
+    equal;
+is_best(Condition, Product, {Best, _Factors}) ->
+    Condition(Product, Best) andalso is_palindrome(Product).
 
 is_palindrome(Product) ->
     % This turns out to be the expensive part of the inner loop.
@@ -39,20 +63,3 @@ is_palindrome(Product) ->
         false ->
             false
     end.
-
-collect_on_condition(Condition, Palindromes) ->
-    lists:foldl(
-        fun ({Product, Factors}, undefined) ->
-            {Product, [Factors]};
-        ({Product, Factors}, {Product, AllFactors}) ->
-            {Product, [Factors | AllFactors]};
-        ({Product, Factors}, {Found, AllFactors}) ->
-            case Condition(Product, Found) of
-                true ->
-                    {Product, [Factors]};
-                false ->
-                    {Found, AllFactors}
-            end
-        end,
-        undefined,
-        Palindromes).

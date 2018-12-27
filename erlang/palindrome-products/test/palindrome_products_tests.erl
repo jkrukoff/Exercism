@@ -38,10 +38,10 @@ largest_min_greater_than_max_test() ->
 	?assertMatch({error, invalid_range}, palindrome_products:largest(2, 1)).
 
 smallest_from_four_digit_factors_test() ->
-	?assertMatch({1002001, [{1001, 1001}]}, normalize_output(palindrome_products:smallest(1000, 7000))).
+	?assertMatch({1002001, [{1001, 1001}]}, normalize_output(palindrome_products:smallest(1000, 9999))).
 
 largest_from_four_digit_factors_test() ->
-	?assertMatch({99000099, [{9901, 9999}]}, normalize_output(palindrome_products:largest(3000, 9999))).
+	?assertMatch({99000099, [{9901, 9999}]}, normalize_output(palindrome_products:largest(1000, 9999))).
 
 normalize_output({Pal, Factors}) ->
 	{
